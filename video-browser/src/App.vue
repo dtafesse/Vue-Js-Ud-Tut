@@ -1,28 +1,45 @@
 <template>
-  <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
-  </div>
+    <div>
+        <SearchBar @termChange="onTermChange"></SearchBar>
+        <!-- assign prop name of vidoes to the vidoes stored in data object-->
+        <!-- v-bind:videos is the same thing as :videos -->
+        <VideoList :videos="videos"></VideoList>
+        
+    </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import axios from 'axios';
+import SearchBar from './components/SearchBar';
+import VideoList from './components/VideoList';
+const API_KEY = "AIzaSyBboZ9p203pslr-AWOUdROFlUrTDj90TK8";
 
 export default {
-  name: 'app',
-  components: {
-    HelloWorld
-  }
-}
+    name: 'App',
+    components: {
+        SearchBar: SearchBar,
+        VideoList: VideoList
+    },
+    data() {
+        return {
+            videos: []
+        };
+    },
+    methods: {
+        onTermChange(searchTerm) {
+            axios.get('https://www.googleapis.com/youtube/v3/search', {
+                params: {
+                    key: API_KEY,
+                    type: 'video',
+                    part: 'snippet',
+                    q: searchTerm
+                }
+            }).then(response => {
+                // recall you dont need to do this.data.videos to access the videos array
+                // component will re render when a data property is updated
+                this.videos = response.data.items;
+            });
+        }
+    }
+};
 </script>
-
-<style>
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-</style>
