@@ -12,6 +12,7 @@ export default {
     };
 
     // causes user's browser to authomatically navigate to the following url
+
     window.location = `${ROOT_URL}/oauth2/authorize?${qs.stringify(
       queryString
     )}`;
@@ -22,5 +23,23 @@ export default {
         Authorization: `Bearer ${token}`
       }
     });
+  },
+  uploadImages(images, token) {
+    const promises = Array.from(images).map(image => {
+      const formData = new FormData();
+      formData.append('image', image);
+
+      return axios.post(`${ROOT_URL}/3/image`, formData, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+    });
+
+    // built in function that takes an array of promises
+    // and waits for every inner promise to be resolved..
+    // then Promise.all itself will resolve
+
+    return Promise.all(promises);
   }
 };
