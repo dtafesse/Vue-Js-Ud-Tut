@@ -27,6 +27,7 @@ export default {
 }
 </script>
 
+
 <style scoped>
     .horizontal{
         display: flex;
